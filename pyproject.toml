@@ -1,0 +1,75 @@
+[project]
+name = "LSP-ty"
+version = "0.0.0"
+description = "LSP helper for ty - an extremely fast Python type checker, written in Rust."
+readme = "README.md"
+requires-python = ">=3.8"
+dependencies = [
+  "Jinja2==3.*",
+  "typing-extensions>=4.12",
+]
+
+[dependency-groups]
+dev = [
+  "mypy>=1.14",
+  "ruff>=0.13",
+]
+
+[tool.uv]
+default-groups = ["dev"]
+
+[tool.mypy]
+# ignore_missing_imports = False
+check_untyped_defs = true
+strict_optional = true
+mypy_path = 'typings:stubs'
+python_version = '3.8'
+
+[[tool.mypy.overrides]]
+module = ["plugin.libs.*", "LSP.*"]
+ignore_errors = true
+ignore_missing_imports = true
+
+[tool.pyright]
+include = ['./']
+exclude = [
+  '**/__pycache__/',
+  '**/node_modules/',
+  # git-related
+  '**/.git/',
+  '**/br-*/',
+  '**/branch-*/',
+]
+ignore = ['**/.venv', '**/libs']
+stubPath = 'typings'
+pythonVersion = '3.8'
+
+[tool.ruff]
+preview = true
+line-length = 120
+target-version = 'py38'
+exclude = [
+  "*/libs/*",
+  ".git",
+  ".mypy_cache",
+  ".venv",
+  ".venv-*",
+  "branch-*",
+  "stubs",
+  "tests/files",
+  "typings",
+  "vendor",
+  "venv",
+  "venv-*",
+]
+
+[tool.ruff.lint]
+select = ["E", "F", "W", "I", "UP", "FURB", "SIM"]
+ignore = ["E203"]
+
+[tool.ruff.lint.per-file-ignores]
+"boot.py" = ["E402"]
+
+[tool.ty.environment]
+extra-paths = ["./typings"]
+python-version = "3.8"

@@ -1,0 +1,26 @@
+{
+    "disabled_capabilities": {
+        // set to true if you don't want semantic highlighting
+        // "semanticTokensProvider": true,
+    },
+    // See https://github.com/astral-sh/ty/blob/main/docs/README.md
+    "initializationOptions": {
+        "settings": {
+            // ...
+        },
+    },
+    "settings": {
+        // The (Jinja2) template of the status bar text which is inside the parentheses `(...)`.
+        // See https://jinja.palletsprojects.com/templates/
+        "statusText": "{% if server_version %}v{{ server_version }}{% endif %}",
+    },
+    "command": [
+        "$server_path",
+        "server"
+    ],
+    "schemes": [
+        "file", // regular files
+        "buffer", // in-memory buffers
+    ],
+    "selector": "source.python"
+}
