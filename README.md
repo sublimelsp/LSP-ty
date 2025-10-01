@@ -22,10 +22,8 @@ There are multiple ways to configure the package and the language server.
 		"settings": {
 			"LSP": {
 				"LSP-ty": {
-					"initializationOptions": {
-						"settings": {
-							// Put your settings here
-						}
+					"settings": {
+						// Put your settings here
 					}
 				}
 			}
