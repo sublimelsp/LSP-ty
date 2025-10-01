@@ -28,7 +28,7 @@
         "ty.experimental.rename": false,
         // Whether to enable the experimental support for auto-import code completions.
         // Note that this feature is currently under active development and may not work correctly or be gratuitously slow.
-        "ty.experimental.autoImport": true,
+        "ty.experimental.autoImport": false,
 
         // The (Jinja2) template of the status bar text which is inside the parentheses `(...)`.
         // See https://jinja.palletsprojects.com/templates/
