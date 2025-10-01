@@ -3,13 +3,33 @@
         // set to true if you don't want semantic highlighting
         // "semanticTokensProvider": true,
     },
-    // See https://github.com/astral-sh/ty/blob/main/docs/README.md
+    // @see https://docs.astral.sh/ty/reference/editor-settings/#initialization-options
     "initializationOptions": {
-        "settings": {
-            // ...
-        },
+        // Path to the file to which the language server writes its log messages.
+        // By default, ty writes log messages to stderr.
+        "ty.logFile": null,
+        // The log level to use for the language server.
+        "ty.logLevel": "info",
     },
+    // @see https://docs.astral.sh/ty/reference/editor-settings/
     "settings": {
+        // Whether to disable the language services that ty provides like code completion, hover, go to definition, etc.
+        // This is useful if you want to use ty exclusively for type checking in combination with another language server for features like code completion, hover, go to definition, etc.
+        "ty.disableLanguageServices": false,
+        // Determines the scope of the diagnostics reported by the language server.
+        // openFilesOnly: Diagnostics are reported only for files that are currently open in the editor.
+        // workspace: Diagnostics are reported for all files in the workspace.
+        "ty.diagnosticMode": "openFilesOnly",
+        // Whether to show the types of variables as inline hints.
+        "ty.inlayHints.variableTypes": true,
+        // Whether to show argument names in call expressions as inline hints.
+        "ty.inlayHints.callArgumentNames": true,
+        // Whether to enable the experimental support for renaming symbols in the editor.
+        "ty.experimental.rename": false,
+        // Whether to enable the experimental support for auto-import code completions.
+        // Note that this feature is currently under active development and may not work correctly or be gratuitously slow.
+        "ty.experimental.autoImport": true,
+
         // The (Jinja2) template of the status bar text which is inside the parentheses `(...)`.
         // See https://jinja.palletsprojects.com/templates/
         "statusText": "{% if server_version %}v{{ server_version }}{% endif %}",
