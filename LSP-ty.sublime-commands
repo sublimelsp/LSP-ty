@@ -1,0 +1,10 @@
+[
+    {
+        "caption": "Preferences: LSP-ty Settings",
+        "command": "edit_settings",
+        "args": {
+            "base_file": "${packages}/LSP-ty/LSP-ty.sublime-settings",
+            "default": "// Settings in here override those in \"LSP-ty/LSP-ty.sublime-settings\"\n{\n\t$0\n}\n"
+        }
+    }
+]

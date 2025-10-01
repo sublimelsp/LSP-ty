@@ -1,0 +1,120 @@
+{
+  "contributions": {
+    "settings": [
+      {
+        "file_patterns": [
+          "/LSP-ty.sublime-settings"
+        ],
+        "schema": {
+          "$id": "sublime://settings/LSP-ty",
+          "definitions": {
+            "PluginConfig": {
+              "properties": {
+                "initializationOptions": {
+                  "type": "object",
+                  "additionalProperties": false,
+                  "properties": {
+                    "logLevel": {
+                      "default": "info",
+                      "markdownDescription": "Controls the log level of the language server.",
+                      "enum": [
+                        "error",
+                        "warning",
+                        "info",
+                        "debug",
+                        "trace"
+                      ],
+                    },
+                    "logFile": {
+                      "default": null,
+                      "markdownDescription": "Path to the log file for the language server.",
+                      "type": [
+                        "string",
+                        "null"
+                      ]
+                    },
+                  }
+                },
+                "settings": {
+                  "additionalProperties": false,
+                  "properties": {
+                    "statusText": {
+                      "type": "string",
+                      "markdownDescription": "The (Jinja2) template of the status bar text which is inside the parentheses `(...)`. See https://jinja.palletsprojects.com/templates/"
+                    },
+                    "ty.disableLanguageServices": {
+                      "default": false,
+                      "markdownDescription": "Whether to disable all language services for ty like completions, hover, goto definition, etc.",
+                      "type": "boolean"
+                    },
+                    "ty.diagnosticMode": {
+                      "default": "openFilesOnly",
+                      "markdownDescription": "Analysis scope for showing diagnostics.",
+                      "enum": [
+                        "openFilesOnly",
+                        "workspace"
+                      ],
+                      "enumDescriptions": [
+                        "Analyzes and reports errors on only open files.",
+                        "Analyzes and reports errors on all files in the workspace."
+                      ],
+                      "type": "string"
+                    },
+                    "ty.experimental.rename": {
+                      "default": false,
+                      "markdownDescription": "Enable experimental support for renaming symbols in ty.",
+                      "type": "boolean"
+                    },
+                    "ty.experimental.autoImport": {
+                      "default": false,
+                      "markdownDescription": "Enable experimental support for auto-import code completions in ty.",
+                      "type": "boolean"
+                    },
+                    "ty.inlayHints.variableTypes": {
+                      "default": true,
+                      "markdownDescription": "Whether to enable inlay hints for variable types.",
+                      "type": "boolean"
+                    },
+                    "ty.inlayHints.callArgumentNames": {
+                      "default": true,
+                      "markdownDescription": "Whether to enable inlay hints for call argument names.",
+                      "type": "boolean"
+                    },
+                  }
+                }
+              },
+            },
+          },
+          "allOf": [
+            {
+              "$ref": "sublime://settings/LSP-plugin-base"
+            },
+            {
+              "$ref": "sublime://settings/LSP-ty#/definitions/PluginConfig"
+            }
+          ],
+        }
+      },
+      {
+        "file_patterns": [
+          "/*.sublime-project"
+        ],
+        "schema": {
+          "properties": {
+            "settings": {
+              "properties": {
+                "LSP": {
+                  "properties": {
+                    "LSP-ty": {
+                      "$ref": "sublime://settings/LSP-ty#/definitions/PluginConfig"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+    ]
+  }
+}
