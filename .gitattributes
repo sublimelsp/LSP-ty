@@ -21,7 +21,6 @@ py.typed export-ignore
 pyproject.toml export-ignore
 pyrightconfig.json export-ignore
 renovate.json export-ignore
-renovate.json export-ignore
 scripts/ export-ignore
 stubs/ export-ignore
 tests/ export-ignore
