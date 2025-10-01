@@ -7,9 +7,9 @@
     "initializationOptions": {
         // Path to the file to which the language server writes its log messages.
         // By default, ty writes log messages to stderr.
-        "ty.logFile": null,
+        "logFile": null,
         // The log level to use for the language server.
-        "ty.logLevel": "info",
+        "logLevel": "info",
     },
     // @see https://docs.astral.sh/ty/reference/editor-settings/
     "settings": {
