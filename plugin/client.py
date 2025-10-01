@@ -17,6 +17,16 @@ from .version_manager import version_manager
 
 class LspTyPlugin(AbstractPlugin):
     @classmethod
+    def name(cls) -> str:
+        return PACKAGE_NAME
+
+    @classmethod
+    def configuration(cls) -> tuple[sublime.Settings, str]:
+        basename = f"{cls.name()}.sublime-settings"
+        filepath = f"Packages/{cls.name()}/{basename}"
+        return sublime.load_settings(basename), filepath
+
+    @classmethod
     def base_dir(cls) -> Path:
         return Path(cls.storage_path()) / PACKAGE_NAME
 
