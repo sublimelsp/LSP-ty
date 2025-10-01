@@ -17,10 +17,6 @@ from .version_manager import version_manager
 
 class LspTyPlugin(AbstractPlugin):
     @classmethod
-    def name(cls) -> str:
-        return PACKAGE_NAME.partition("LSP-")[2]
-
-    @classmethod
     def base_dir(cls) -> Path:
         return Path(cls.storage_path()) / PACKAGE_NAME
 
