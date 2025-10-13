@@ -38,7 +38,7 @@ class VersionManager:
     def server_version(self) -> str:
         """The server version without a "v" prefix."""
         if m := re.search(
-            r"^ty==(.+)",
+            r"^ty==(.+)",  # e.g., "ty==0.0.1a22"
             sublime.load_resource(f"Packages/{PACKAGE_NAME}/requirements.txt"),
             re.MULTILINE,
         ):
@@ -47,7 +47,9 @@ class VersionManager:
 
     @cached_property
     def download_url(self) -> str:
-        return self.DOWNLOAD_URL_TEMPLATE.format(version=self.server_version, tarball_name=self.THIS_TARBALL_NAME)
+        # convert the version like "0.0.1a22" into "0.0.1-alpha.22"
+        server_version = self.server_version.replace("a", "-alpha.").replace("b", "-beta.")
+        return self.DOWNLOAD_URL_TEMPLATE.format(version=server_version, tarball_name=self.THIS_TARBALL_NAME)
 
     @cached_property
     def download_hash_url(self) -> str:
