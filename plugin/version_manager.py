@@ -1,8 +1,7 @@
 from __future__ import annotations
 
 import io
-import os
-from pathlib import Path
+import pathlib
 
 from LSP.plugin import AbstractPlugin
 
@@ -50,18 +49,18 @@ class VersionManager:
         )
 
     @property
-    def plugin_storage_dir(self) -> Path:
+    def plugin_storage_dir(self) -> pathlib.Path:
         """The storage directory for this plugin."""
         assert self.client_cls, "VersionManager.client_cls must be set to a subclass of Abstract"
-        return Path(self.client_cls.storage_path()) / PACKAGE_NAME
+        return pathlib.Path(self.client_cls.storage_path()) / PACKAGE_NAME
 
     @property
-    def versioned_server_dir(self) -> Path:
+    def versioned_server_dir(self) -> pathlib.Path:
         """The directory specific to the current server version."""
         return self.plugin_storage_dir / f"v{self.server_version}"
 
     @property
-    def server_path(self) -> Path:
+    def server_path(self) -> pathlib.Path:
         """The path of the language server binary."""
         return self.versioned_server_dir / self.THIS_TARBALL_BIN_PATH
 
@@ -83,7 +82,7 @@ class VersionManager:
             dst_dir=self.versioned_server_dir,
         )
         # make the server binary executable (required on Mac/Linux)
-        os.chmod(self.server_path, 0o755)
+        self.server_path.chmod(0o755)
 
 
 version_manager = VersionManager()
