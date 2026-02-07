@@ -1,11 +1,14 @@
 from __future__ import annotations
 
-import re
-from functools import cached_property
+import io
+import os
+from pathlib import Path
 
-import sublime
+from LSP.plugin import AbstractPlugin
 
 from .constants import PACKAGE_NAME, PLATFORM_ARCH
+from .log import log_info
+from .utils import decompress_buffer, rmtree_ex, simple_urlopen
 
 
 class VersionManager:
@@ -34,26 +37,53 @@ class VersionManager:
     """`platform_arch`-specific relative path of the server executable in the tarball."""
     THIS_TARBALL_BIN_PATH = TARBALL_BIN_PATHS[PLATFORM_ARCH]
 
-    @cached_property
-    def server_version(self) -> str:
-        """The server version without a "v" prefix."""
-        if m := re.search(
-            r"^ty==(.+)",  # e.g., "ty==0.0.1a22"
-            sublime.load_resource(f"Packages/{PACKAGE_NAME}/requirements.txt"),
-            re.MULTILINE,
-        ):
-            return m.group(1).strip()
-        raise ValueError("Failed to parse server version from requirements.txt")
+    def __init__(self) -> None:
+        self.client_cls: type[AbstractPlugin] | None = None
+        self.server_version = ""
 
-    @cached_property
-    def download_url(self) -> str:
-        # convert the version like "0.0.1a22" into "0.0.1-alpha.22"
-        server_version = self.server_version.replace("a", "-alpha.").replace("b", "-beta.")
-        return self.DOWNLOAD_URL_TEMPLATE.format(version=server_version, tarball_name=self.THIS_TARBALL_NAME)
+    @property
+    def server_download_url(self) -> str:
+        """The URL for downloading the server tarball."""
+        return self.DOWNLOAD_URL_TEMPLATE.format(
+            tarball_name=self.THIS_TARBALL_NAME.format(version=self.server_version),
+            version=self.server_version,
+        )
 
-    @cached_property
-    def download_hash_url(self) -> str:
-        return f"{self.download_url}.sha256"
+    @property
+    def plugin_storage_dir(self) -> Path:
+        """The storage directory for this plugin."""
+        assert self.client_cls, "VersionManager.client_cls must be set to a subclass of Abstract"
+        return Path(self.client_cls.storage_path()) / PACKAGE_NAME
+
+    @property
+    def versioned_server_dir(self) -> Path:
+        """The directory specific to the current server version."""
+        return self.plugin_storage_dir / f"v{self.server_version}"
+
+    @property
+    def server_path(self) -> Path:
+        """The path of the language server binary."""
+        return self.versioned_server_dir / self.THIS_TARBALL_BIN_PATH
+
+    @property
+    def is_installed(self) -> bool:
+        """Checks if the server executable is already installed."""
+        return self.server_path.is_file()
+
+    def install_server(self) -> None:
+        """Installs the server executable."""
+        rmtree_ex(self.plugin_storage_dir, ignore_errors=True)  # delete old versions
+
+        log_info(f"Downloading server tarball: {self.server_download_url}")
+        data = simple_urlopen(self.server_download_url)
+
+        decompress_buffer(
+            io.BytesIO(data),
+            filename=self.THIS_TARBALL_NAME,
+            dst_dir=self.versioned_server_dir,
+        )
+        # make the server binary executable (required on Mac/Linux)
+        os.chmod(self.server_path, 0o755)
 
 
 version_manager = VersionManager()
