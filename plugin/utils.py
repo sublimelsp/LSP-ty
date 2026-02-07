@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import gzip
-import hashlib
+import io
 import os
 import re
 import shutil
@@ -44,9 +44,8 @@ def decompress_buffer(buffer: IO[bytes], *, filename: str, dst_dir: PathLike) ->
     dst_dir = Path(dst_dir)
     dst_dir.mkdir(parents=True, exist_ok=True)
 
-    if m := re.search(r"\.tar(?:\.(bz2|gz|xz))?$", filename):
-        sub_ext = m.group(1) or ""
-        with tarfile.open(fileobj=buffer, mode=f"r:{sub_ext}") as tar_f:
+    if re.search(r"\.tar(?:\.(bz2|gz|xz))?$", filename):
+        with tarfile.open(fileobj=buffer, mode="r:*") as tar_f:
             tar_safe_extract(tar_f, dst_dir)
         return True
 
@@ -76,32 +75,12 @@ def decompress_file(tarball: PathLike, dst_dir: PathLike | None = None) -> bool:
 
 def simple_urlopen(url: str, *, chunk_size: int = 512 * 1024) -> bytes:
     with urllib.request.urlopen(url) as resp:
-        data = b""
-        while chunk := resp.read(chunk_size):
-            data += chunk
+        buffer = io.BytesIO()
+        shutil.copyfileobj(resp, buffer, length=chunk_size)
+        data = buffer.getvalue()
         if resp.info().get("Content-Encoding") == "gzip":
             data = gzip.decompress(data)
     return data
-
-
-def save_content(content: str | bytes, path: PathLike, *, encoding: str = "utf-8") -> None:
-    path = Path(path)
-    path.parent.mkdir(parents=True, exist_ok=True)
-
-    if isinstance(content, str):
-        path.write_text(content, encoding=encoding)
-    else:
-        path.write_bytes(content)
-
-
-def sha256sum(target: bytes | str | Path, *, encoding: str = "utf-8") -> str:
-    """Calculates the lowercase SHA-256 hash of the string, bytes or file."""
-    if isinstance(target, str):
-        target = target.encode(encoding)
-    elif isinstance(target, Path):
-        target = target.read_bytes()
-
-    return hashlib.sha256(target).hexdigest()
 
 
 def rmtree_ex(path: str | Path, ignore_errors: bool = False, **kwargs: Any) -> None:
