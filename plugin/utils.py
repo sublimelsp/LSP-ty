@@ -73,8 +73,8 @@ def decompress_file(tarball: PathLike, dst_dir: PathLike | None = None) -> bool:
         return decompress_buffer(f, filename=tarball.name, dst_dir=dst_dir)
 
 
-def simple_urlopen(url: str, *, chunk_size: int = 512 * 1024) -> bytes:
-    with urllib.request.urlopen(url) as resp:
+def simple_urlopen(url: str, *, chunk_size: int = 512 * 1024, timeout: int = 30) -> bytes:
+    with urllib.request.urlopen(url, timeout=timeout) as resp:
         buffer = io.BytesIO()
         shutil.copyfileobj(resp, buffer, length=chunk_size)
         data = buffer.getvalue()
