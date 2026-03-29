@@ -4,7 +4,7 @@
         // "semanticTokensProvider": true,
     },
     // @see https://docs.astral.sh/ty/reference/editor-settings/#initialization-options
-    "initializationOptions": {
+    "initialization_options": {
         // Path to the file to which the language server writes its log messages.
         // By default, ty writes log messages to stderr.
         "logFile": null,
