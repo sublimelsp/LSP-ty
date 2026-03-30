@@ -13,6 +13,9 @@
     },
     // @see https://docs.astral.sh/ty/reference/editor-settings/
     "settings": {
+        // Path to a virtual environment directory. Can be absolute or relative to the workspace folder.
+        // When set, the Python interpreter from this venv is passed to the ty server.
+        "ty.venvDir": "",
         // Whether to disable the language services that ty provides like code completion, hover, go to definition, etc.
         // This is useful if you want to use ty exclusively for type checking in combination with another language server for features like code completion, hover, go to definition, etc.
         "ty.disableLanguageServices": false,
