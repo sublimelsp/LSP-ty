@@ -1,5 +1,10 @@
 from __future__ import annotations
 
+from collections.abc import Iterable
+from pathlib import Path
+from typing import Any
+from typing import IO
+from typing import Union
 import gzip
 import io
 import os
@@ -8,9 +13,6 @@ import shutil
 import tarfile
 import urllib.request
 import zipfile
-from collections.abc import Iterable
-from pathlib import Path
-from typing import IO, Any, Union
 
 PathLike = Union[Path, str]
 

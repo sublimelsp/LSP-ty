@@ -1,15 +1,15 @@
 from __future__ import annotations
 
-from typing import Any
-
-import sublime
-from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict
-from typing_extensions import override
-
 from .constants import PACKAGE_NAME
 from .log import log_warning
 from .template import load_string_template
 from .version_manager import version_manager
+from LSP.plugin import AbstractPlugin
+from LSP.plugin import ClientConfig
+from LSP.plugin import DottedDict
+from typing import Any
+from typing_extensions import override
+import sublime
 
 
 class LspTyPlugin(AbstractPlugin):
