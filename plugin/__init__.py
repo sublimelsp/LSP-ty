@@ -1,10 +1,10 @@
 from __future__ import annotations
 
+from LSP.plugin import register_plugin, unregister_plugin
+
 from .client import LspTyPlugin
 from .constants import SERVER_VERSION
 from .version_manager import version_manager
-from LSP.plugin import register_plugin
-from LSP.plugin import unregister_plugin
 
 __all__ = (
     # ST: core
