@@ -10,7 +10,7 @@ import urllib.request
 import zipfile
 from collections.abc import Iterable
 from pathlib import Path
-from typing import IO, Any, Union
+from typing import Any, IO, Union
 
 PathLike = Union[Path, str]
 
