@@ -1,9 +1,11 @@
 from __future__ import annotations
 
+import sys
+from pathlib import Path
 from typing import Any
 
 import sublime
-from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict
+from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict, WorkspaceFolder
 from typing_extensions import override
 
 from .constants import PACKAGE_NAME
@@ -51,6 +53,20 @@ class LspTyPlugin(AbstractPlugin):
             and not view.settings().get("repl")
         )
 
+    @override
+    @classmethod
+    def on_pre_start(
+        cls,
+        window: sublime.Window,
+        initiating_view: sublime.View,
+        workspace_folders: list[WorkspaceFolder],
+        configuration: ClientConfig,
+    ) -> str | None:
+        venv_dir = cls._find_venv_dir(workspace_folders, configuration)
+        if venv_dir:
+            configuration.env["VIRTUAL_ENV"] = str(venv_dir)
+        return None
+
     # ----- #
     # hooks #
     # ----- #
@@ -59,11 +75,38 @@ class LspTyPlugin(AbstractPlugin):
     def on_settings_changed(self, settings: DottedDict) -> None:
         super().on_settings_changed(settings)
 
+        # Remove our custom setting so it doesn't get sent to the ty server
+        settings.remove("ty.venvDir")
+
         self.update_status_bar_text()
 
     # -------------- #
     # custom methods #
     # -------------- #
+
+    @classmethod
+    def _find_venv_dir(
+        cls, workspace_folders: list[WorkspaceFolder], configuration: ClientConfig
+    ) -> Path | None:
+        """Find a virtual environment directory, checking the ty.venvDir setting first, then auto-detecting."""
+        if not workspace_folders:
+            return None
+        project_dir = Path(workspace_folders[0].path)
+
+        # 1. Check explicit setting
+        venv_dir_setting = configuration.settings.get("ty.venvDir") or ""
+        if venv_dir_setting:
+            path = Path(venv_dir_setting)
+            if not path.is_absolute():
+                path = project_dir / path
+            if cls._is_venv(path):
+                return path
+            return None
+
+    @staticmethod
+    def _is_venv(path: Path) -> bool:
+        """Check if a directory looks like a Python virtual environment."""
+        return path.is_dir() and (path / "pyvenv.cfg").is_file()
 
     def update_status_bar_text(self, extra_variables: dict[str, Any] | None = None) -> None:
         if not (session := self.weaksession()):
