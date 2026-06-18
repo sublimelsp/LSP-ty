@@ -13,6 +13,11 @@
     },
     // @see https://docs.astral.sh/ty/reference/editor-settings/
     "settings": {
+        // Whether to include auto-import suggestions in code completions. That is, code completions will include
+        // symbols not currently in scope but available in your environment.
+        "ty.completions.autoImport": true,
+        // Whether accepting a function, method, or class completion also inserts parentheses and places the cursor inside them.
+        "ty.completions.completeFunctionParentheses": false,
         // Whether to disable the language services that ty provides like code completion, hover, go to definition, etc.
         // This is useful if you want to use ty exclusively for type checking in combination with another language server for features like code completion, hover, go to definition, etc.
         "ty.disableLanguageServices": false,
@@ -24,11 +29,9 @@
         "ty.inlayHints.variableTypes": true,
         // Whether to show argument names in call expressions as inline hints.
         "ty.inlayHints.callArgumentNames": true,
-        // Whether to enable the experimental support for renaming symbols in the editor.
-        "ty.experimental.rename": false,
-        // Whether to enable the experimental support for auto-import code completions.
-        // Note that this feature is currently under active development and may not work correctly or be gratuitously slow.
-        "ty.experimental.autoImport": false,
+        // Whether to show syntax error diagnostics.
+        // This is useful when using ty with other language servers, allowing the user to refer to syntax errors from only one source.
+        "ty.showSyntaxErrors": true,
 
         // The (Jinja2) template of the status bar text which is inside the parentheses `(...)`.
         // See https://jinja.palletsprojects.com/templates/

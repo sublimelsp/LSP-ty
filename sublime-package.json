@@ -42,6 +42,16 @@
                       "type": "string",
                       "markdownDescription": "The (Jinja2) template of the status bar text which is inside the parentheses `(...)`. See https://jinja.palletsprojects.com/templates/"
                     },
+                    "ty.completions.autoImport": {
+                      "default": true,
+                      "markdownDescription": "Whether to include auto-import suggestions in code completions. That is, code completions will include symbols not currently in scope but available in your environment.",
+                      "type": "boolean"
+                    },
+                    "ty.completions.completeFunctionParentheses": {
+                      "default": false,
+                      "markdownDescription": "Whether accepting a function, method, or class completion also inserts parentheses and places the cursor inside them.",
+                      "type": "boolean"
+                    },
                     "ty.disableLanguageServices": {
                       "default": false,
                       "markdownDescription": "Whether to disable all language services for ty like completions, hover, goto definition, etc.",
@@ -60,16 +70,6 @@
                       ],
                       "type": "string"
                     },
-                    "ty.experimental.rename": {
-                      "default": false,
-                      "markdownDescription": "Enable experimental support for renaming symbols in ty.",
-                      "type": "boolean"
-                    },
-                    "ty.experimental.autoImport": {
-                      "default": false,
-                      "markdownDescription": "Enable experimental support for auto-import code completions in ty.",
-                      "type": "boolean"
-                    },
                     "ty.inlayHints.variableTypes": {
                       "default": true,
                       "markdownDescription": "Whether to enable inlay hints for variable types.",
@@ -80,6 +80,11 @@
                       "markdownDescription": "Whether to enable inlay hints for call argument names.",
                       "type": "boolean"
                     },
+                    "ty.showSyntaxErrors": {
+                      "default": true,
+                      "markdownDescription": "Whether to show syntax error diagnostics.\n\nThis is useful when using ty with other language servers, allowing the user to refer to syntax errors from only one source.",
+                      "type": "boolean"
+                    }
                   }
                 }
               },
