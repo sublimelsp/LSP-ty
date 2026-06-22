@@ -11,15 +11,14 @@ from .version_manager import VersionManager
 
 
 class LspTyPlugin(LspPlugin):
-    version_manager: VersionManager | None = None
-
     @classmethod
     def on_pre_start_async(cls, context: OnPreStartContext) -> None:
         server_path = context.configuration.root_settings.get("server_path")
         if not server_path or server_path == "auto":
-            cls.version_manager = VersionManager(cls.plugin_storage_path, SERVER_VERSION)
-            cls.version_manager.install_server()
-            server_path = str(cls.version_manager.server_path)
+            version_manager = VersionManager(cls.plugin_storage_path, SERVER_VERSION)
+            version_manager.install_server()
+            server_path = str(version_manager.server_path)
+            context.configuration.root_settings['_server_version'] = version_manager.server_version
 
         context.variables.update({
             "server_path": server_path,
@@ -43,7 +42,7 @@ class LspTyPlugin(LspPlugin):
             return
 
         variables: dict[str, Any] = {
-            "server_version": self.version_manager.server_version if self.version_manager else None,
+            "server_version": session.config.root_settings.get('_server_version'),
         }
 
         if extra_variables:
