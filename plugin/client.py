@@ -18,7 +18,7 @@ class LspTyPlugin(LspPlugin):
             version_manager = VersionManager(cls.plugin_storage_path, SERVER_VERSION)
             version_manager.install_server()
             server_path = str(version_manager.server_path)
-            context.configuration.root_settings['_server_version'] = version_manager.server_version
+            context.configuration.root_settings["_server_version"] = version_manager.server_version
 
         context.variables.update({
             "server_path": server_path,
@@ -42,7 +42,7 @@ class LspTyPlugin(LspPlugin):
             return
 
         variables: dict[str, Any] = {
-            "server_version": session.config.root_settings.get('_server_version'),
+            "server_version": session.config.root_settings.get("_server_version"),
         }
 
         if extra_variables:
