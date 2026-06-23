@@ -1,9 +1,10 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
 import sublime
-from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict
+from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict, WorkspaceFolder
 from typing_extensions import override
 
 from .constants import PACKAGE_NAME
@@ -60,6 +61,13 @@ class LspTyPlugin(AbstractPlugin):
         super().on_settings_changed(settings)
 
         self.update_status_bar_text()
+
+    @override
+    @classmethod
+    def on_pre_start(cls, window: sublime.Window, initiating_view: sublime.View,
+                     workspace_folders: list[WorkspaceFolder], configuration: ClientConfig) -> str | None:
+        if not workspace_folders:
+            return os.path.dirname(initiating_view.file_name())
 
     # -------------- #
     # custom methods #
