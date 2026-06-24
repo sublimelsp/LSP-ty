@@ -2,64 +2,36 @@ from __future__ import annotations
 
 from typing import Any
 
-import sublime
-from LSP.plugin import AbstractPlugin, ClientConfig, DottedDict
-from typing_extensions import override
+from LSP.plugin import ClientNotification, LspPlugin, OnPreStartContext
 
-from .constants import PACKAGE_NAME
+from .constants import SERVER_VERSION
 from .log import log_warning
 from .template import load_string_template
-from .version_manager import version_manager
+from .version_manager import VersionManager
 
 
-class LspTyPlugin(AbstractPlugin):
-    @override
+class LspTyPlugin(LspPlugin):
     @classmethod
-    def name(cls) -> str:
-        return PACKAGE_NAME
+    def on_pre_start_async(cls, context: OnPreStartContext) -> None:
+        server_path = context.configuration.root_settings.get("server_path")
+        if not server_path or server_path == "auto":
+            version_manager = VersionManager(cls.plugin_storage_path, SERVER_VERSION)
+            version_manager.install_server()
+            server_path = str(version_manager.server_path)
+            context.configuration.root_settings["_server_version"] = version_manager.server_version
 
-    @override
-    @classmethod
-    def configuration(cls) -> tuple[sublime.Settings, str]:
-        basename = f"{cls.name()}.sublime-settings"
-        filepath = f"Packages/{cls.name()}/{basename}"
-        return sublime.load_settings(basename), filepath
-
-    @override
-    @classmethod
-    def additional_variables(cls) -> dict[str, str] | None:
-        return {
-            "server_path": str(version_manager.server_path),
-        }
-
-    @override
-    @classmethod
-    def needs_update_or_installation(cls) -> bool:
-        return not version_manager.is_installed
-
-    @override
-    @classmethod
-    def install_or_update(cls) -> None:
-        version_manager.install_server()
-
-    @override
-    @classmethod
-    def is_applicable(cls, view: sublime.View, config: ClientConfig) -> bool:
-        return bool(
-            super().is_applicable(view, config)
-            # REPL views (https://github.com/sublimelsp/LSP-pyright/issues/343)
-            and not view.settings().get("repl")
-        )
+        context.variables.update({
+            "server_path": server_path,
+        })
 
     # ----- #
     # hooks #
     # ----- #
 
-    @override
-    def on_settings_changed(self, settings: DottedDict) -> None:
-        super().on_settings_changed(settings)
-
-        self.update_status_bar_text()
+    def on_pre_send_notification_async(self, notification: ClientNotification) -> None:
+        if notification["method"] == "workspace/didChangeConfiguration":
+            self.update_status_bar_text()
+            return
 
     # -------------- #
     # custom methods #
@@ -70,7 +42,7 @@ class LspTyPlugin(AbstractPlugin):
             return
 
         variables: dict[str, Any] = {
-            "server_version": version_manager.server_version,
+            "server_version": session.config.root_settings.get("_server_version"),
         }
 
         if extra_variables:

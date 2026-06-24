@@ -1,11 +1,9 @@
 from __future__ import annotations
 
 import io
-import pathlib
+from pathlib import Path
 
-from LSP.plugin import AbstractPlugin
-
-from .constants import PACKAGE_NAME, PLATFORM_ARCH
+from .constants import PLATFORM_ARCH
 from .log import log_info
 from .utils import decompress_buffer, rmtree_ex, simple_urlopen
 
@@ -43,50 +41,37 @@ class VersionManager:
     }
     THIS_TARBALL_NAME, THIS_TARBALL_BIN_PATH = PLATFORM_TARBALLS[PLATFORM_ARCH]
 
-    def __init__(self) -> None:
-        self.client_cls: type[AbstractPlugin] | None = None
-        self.server_version = ""
+    def __init__(self, plugin_storage_path: Path, server_version: str) -> None:
+        self.plugin_storage_path = plugin_storage_path
+        self.server_version = server_version
 
     @property
-    def server_download_url(self) -> str:
-        """The URL for downloading the server tarball."""
-        return self.DOWNLOAD_URL_TEMPLATE.format(tarball_name=self.THIS_TARBALL_NAME, version=self.server_version)
-
-    @property
-    def plugin_storage_dir(self) -> pathlib.Path:
-        """The storage directory for this plugin."""
-        assert self.client_cls, "VersionManager.client_cls must be set to a subclass of Abstract"
-        return pathlib.Path(self.client_cls.storage_path()) / PACKAGE_NAME
-
-    @property
-    def versioned_server_dir(self) -> pathlib.Path:
+    def _versioned_server_dir(self) -> Path:
         """The directory specific to the current server version."""
-        return self.plugin_storage_dir / f"v{self.server_version}"
+        return self.plugin_storage_path / f"v{self.server_version}"
 
     @property
-    def server_path(self) -> pathlib.Path:
+    def server_path(self) -> Path:
         """The path of the language server binary."""
-        return self.versioned_server_dir / self.THIS_TARBALL_BIN_PATH
-
-    @property
-    def is_installed(self) -> bool:
-        """Checks if the server executable is already installed."""
-        return self.server_path.is_file()
+        return self._versioned_server_dir / self.THIS_TARBALL_BIN_PATH
 
     def install_server(self) -> None:
         """Installs the server executable."""
-        rmtree_ex(self.plugin_storage_dir, ignore_errors=True)  # delete old versions
+        if self.server_path.is_file():
+            return
 
-        log_info(f"Downloading server tarball: {self.server_download_url}")
-        data = simple_urlopen(self.server_download_url)
+        rmtree_ex(self.plugin_storage_path, ignore_errors=True)  # delete old versions
+
+        server_download_url = self.DOWNLOAD_URL_TEMPLATE.format(
+            tarball_name=self.THIS_TARBALL_NAME, version=self.server_version
+        )
+        log_info(f"Downloading server tarball: {server_download_url}")
+        data = simple_urlopen(server_download_url)
 
         decompress_buffer(
             io.BytesIO(data),
             filename=self.THIS_TARBALL_NAME,
-            dst_dir=self.versioned_server_dir,
+            dst_dir=self._versioned_server_dir,
         )
         # make the server binary executable (required on Mac/Linux)
         self.server_path.chmod(0o755)
-
-
-version_manager = VersionManager()

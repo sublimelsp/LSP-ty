@@ -1,11 +1,11 @@
 [project]
-name = "LSP-ty"
+name = "lsp-ty"
 version = "0.0.0"
 description = "LSP helper for ty - an extremely fast Python type checker, written in Rust."
 readme = "README.md"
 requires-python = ">=3.8"
 dependencies = [
-  "Jinja2==3.*",
+  "jinja2==3.*",
   "typing-extensions>=4.12",
 ]
 
@@ -43,6 +43,7 @@ exclude = [
 ignore = ['**/.venv', '**/libs']
 stubPath = 'typings'
 pythonVersion = '3.8'
+typeCheckingMode = 'standard'
 
 [tool.ruff]
 preview = true

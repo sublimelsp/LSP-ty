@@ -1,10 +1,6 @@
 from __future__ import annotations
 
-from LSP.plugin import register_plugin, unregister_plugin
-
 from .client import LspTyPlugin
-from .constants import SERVER_VERSION
-from .version_manager import version_manager
 
 __all__ = (
     # ST: core
@@ -17,12 +13,9 @@ __all__ = (
 
 def plugin_loaded() -> None:
     """Executed when this plugin is loaded."""
-    register_plugin(LspTyPlugin)
-
-    version_manager.client_cls = LspTyPlugin
-    version_manager.server_version = SERVER_VERSION
+    LspTyPlugin.register()
 
 
 def plugin_unloaded() -> None:
     """Executed when this plugin is unloaded."""
-    unregister_plugin(LspTyPlugin)
+    LspTyPlugin.unregister()
