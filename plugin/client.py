@@ -24,8 +24,9 @@ class LspTyPlugin(LspPlugin):
         context.variables.update({
             "server_path": server_path,
         })
-        if not context.workspace_folders:
-            context.working_directory = os.path.dirname(context.view.file_name())
+        if not context.working_directory and (file_name := context.view.file_name()):
+            context.working_directory = os.path.dirname(file_name)
+
     # ----- #
     # hooks #
     # ----- #
