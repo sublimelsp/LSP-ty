@@ -8,6 +8,7 @@ To use this package, you must have:
 
 - The [LSP](https://packagecontrol.io/packages/LSP) package
 - It's recommended to also install the [LSP-json](https://packagecontrol.io/packages/LSP-json) package which will provide auto-completion and validation for this package's settings.
+- It's recommended to also install the [LSP-file-watcher-rust](https://packagecontrol.io/packages/LSP-file-watcher-rust) package which will notify the server about changes to files made outside of Sublime Text or to files that are not open.
 
 ## Configuration
 
