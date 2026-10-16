@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import os
 from typing import Any
 
 from LSP.plugin import ClientNotification, LspPlugin, OnPreStartContext
@@ -23,6 +24,8 @@ class LspTyPlugin(LspPlugin):
         context.variables.update({
             "server_path": server_path,
         })
+        if not context.working_directory and (file_name := context.view.file_name()):
+            context.working_directory = os.path.dirname(file_name)
 
     # ----- #
     # hooks #
