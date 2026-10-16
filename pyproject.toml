@@ -58,6 +58,7 @@ exclude = [
   "branch-*",
   "stubs",
   "tests/files",
+  "tests/smoke",
   "typings",
   "vendor",
   "venv",
