@@ -16,5 +16,17 @@
       "datasourceTemplate": "github-releases",
       "packageNameTemplate": "astral-sh/ty"
     }
+  ],
+  "packageRules": [
+    {
+      "description": "Automerge minor updates of the 0.x server too, which the automerge-server preset leaves out",
+      "matchPackageNames": [
+        "astral-sh/ty"
+      ],
+      "matchUpdateTypes": [
+        "minor"
+      ],
+      "automerge": true
+    }
   ]
 }
